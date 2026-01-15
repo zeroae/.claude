@@ -20,13 +20,13 @@ Use emoji-only prefix (not full conventional commit format):
 
 | Type | Emoji | Example |
 |------|-------|---------|
-| Feature | ✨ | `✨ add health_check method` |
-| Bug | 🐛 | `🐛 fix asyncio deprecation warning` |
-| Task | 📋 | `📋 update migration docs` |
+| Feature | ✨ | `✨ Add health_check method` |
+| Bug | 🐛 | `🐛 Fix asyncio deprecation warning` |
+| Task | 📋 | `📋 Update migration docs` |
 | Epic | 🎯 | `🎯 v0.9.0: API Polish` |
-| Chore | 🔧 | `🔧 update CI workflow` |
+| Chore | 🔧 | `🔧 Update CI workflow` |
 
-Note: Commit messages use full conventional format (`✨ feat(scope):`), but issue titles use emoji-only since Issue Types already indicate the category.
+Note: Issue/PR titles use **capitalized** descriptions for readability. Commit messages use lowercase (`✨ feat(scope): add feature`) per conventional commits.
 
 ## Labels
 
