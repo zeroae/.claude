@@ -7,7 +7,7 @@ Organization-wide instructions for Claude Code AI assistants.
 Add as a submodule to your project:
 
 ```bash
-git submodule add git@github.com:zeroae/.claude.git .claude/rules/org
+git submodule add https://github.com/zeroae/.claude.git .claude/rules/zeroae
 ```
 
 ## For AI Assistants
@@ -15,5 +15,5 @@ git submodule add git@github.com:zeroae/.claude.git .claude/rules/org
 Periodically update this submodule to get the latest conventions:
 
 ```bash
-git submodule update --remote .claude/rules/org
+git submodule update --remote .claude/rules/zeroae
 ```
