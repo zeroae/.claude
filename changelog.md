@@ -39,17 +39,21 @@ trim = true
 conventional_commits = true
 filter_unconventional = true
 commit_preprocessors = [
-  # Remove emoji and extract type, scope, and message
-  { pattern = '^[^\w\s]+\s*(\w+)(\(([^\)]+)\))?:\s*(.*)$', replace = "${1}(${3}): ${4}" },
+  # Strip emoji prefix and normalize to conventional commit format
+  # Uses [^a-zA-Z]* instead of [^\w\s]+ because Rust regex doesn't reliably match Unicode emojis
+  { pattern = '^[^a-zA-Z]*(feat|fix|docs|refactor|test|perf|chore|revert|style|ci)(\([^)]*\))?!?:\s*', replace = "${1}${2}: " },
+  # Convert GitHub auto-generated revert format: Revert "type(scope): msg" -> revert: msg
+  { pattern = '^Revert "([^"]+)"', replace = "revert: ${1}" },
 ]
 commit_parsers = [
   { message = "^feat", group = "Features" },
   { message = "^fix", group = "Bug Fixes" },
-  { message = "^doc", group = "Documentation" },
+  { message = "^docs", group = "Documentation" },
   { message = "^perf", group = "Performance" },
   { message = "^refactor", group = "Refactoring" },
   { message = "^style", group = "Styling" },
   { message = "^test", group = "Testing" },
+  { message = "^ci", group = "CI" },
   { message = "^chore", group = "Miscellaneous Tasks" },
   { message = "^revert", group = "Revert" },
 ]
