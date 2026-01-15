@@ -49,6 +49,23 @@ Common attributes across projects:
 - `good first issue` - Good for newcomers
 - `help wanted` - Extra attention needed
 
+## Pull Requests
+
+When creating a PR that closes an issue, inherit the issue's metadata:
+
+1. **Copy labels** from the linked issue to the PR
+2. **Copy milestone** from the linked issue to the PR
+
+```bash
+# Get issue metadata
+gh issue view <issue-number> --json labels,milestone
+
+# Apply to PR
+gh pr edit <pr-number> --add-label "area/foo" --milestone "vX.Y.Z"
+```
+
+This ensures PRs are tracked in the same milestone and have consistent labeling for filtering and reporting.
+
 ## Release Planning
 
 Releases are tracked using GitHub milestones, narrative issues, and sub-issues:
