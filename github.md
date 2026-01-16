@@ -112,16 +112,25 @@ Releases are tracked using GitHub milestones, narrative issues, and sub-issues:
 - **Narrative issue**: Context - theme, goals, success criteria, breaking changes (type: Epic)
 - **Sub-issues**: Link work tickets to narrative issues for progress tracking
 
+### Querying Milestones
+
+Query milestones dynamically rather than maintaining static lists in documentation:
+
+```bash
+# Open milestones
+gh api repos/{owner}/{repo}/milestones --jq '.[] | "- \(.title): \(.description)"'
+
+# Closed milestones
+gh api repos/{owner}/{repo}/milestones?state=closed --jq '.[] | "- \(.title): \(.description)"'
+
+# Issues in a milestone
+gh issue list --milestone vX.Y.Z
+gh issue list --milestone vX.Y.Z --state closed
+```
+
 ### Creating a Release
 
 1. **Create milestone** with a short description
 2. **Create narrative issue** using the `Release Epic` template, assign to milestone
 3. **Add sub-issues** to link work tickets to the narrative
 4. **Assign work tickets** to the milestone
-
-### Viewing Progress
-
-```bash
-gh issue list --milestone vX.Y.Z
-gh issue list --milestone vX.Y.Z --state closed
-```
