@@ -89,16 +89,24 @@ Common attributes across projects:
 
 ## Pull Requests
 
-When creating a PR that closes an issue, inherit the issue's metadata:
+When creating a PR that closes an issue, inherit the issue's metadata (labels, milestone) at creation time.
 
-1. **Copy labels** from the linked issue to the PR
-2. **Copy milestone** from the linked issue to the PR
+### Creating a PR with Issue Metadata
 
 ```bash
-# Get issue metadata
+# 1. Get the linked issue's metadata
 gh issue view <issue-number> --json labels,milestone
 
-# Apply to PR
+# 2. Create PR with inherited metadata
+gh pr create --title "feat(scope): description" \
+  --body "Closes #<issue-number>" \
+  --label "area/foo" \
+  --milestone "vX.Y.Z"
+```
+
+### Updating an Existing PR
+
+```bash
 gh pr edit <pr-number> --add-label "area/foo" --milestone "vX.Y.Z"
 ```
 
