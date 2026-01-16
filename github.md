@@ -26,7 +26,20 @@ Use emoji-only prefix (not full conventional commit format):
 | Epic | 🎯 | `🎯 v0.9.0: API Polish` |
 | Chore | 🔧 | `🔧 Update CI workflow` |
 
-Note: Issue/PR titles use **capitalized** descriptions for readability. Commit messages use lowercase (`✨ feat(scope): add feature`) per conventional commits.
+Note: Issue titles use **capitalized** descriptions for readability.
+
+## Pull Request Titles
+
+PR titles follow conventional commits format (lowercase, no emoji) for changelog generation:
+
+| Type | Example |
+|------|---------|
+| Feature | `feat(limiter): add health_check method` |
+| Bug | `fix(cli): handle missing config file` |
+| Docs | `docs: update deployment guide` |
+| Chore | `chore(ci): update workflow actions` |
+
+The merge commit uses the PR title, and `git-cliff` parses it to generate changelogs.
 
 ## Labels
 
