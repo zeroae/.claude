@@ -41,27 +41,21 @@ PR titles follow conventional commits format (lowercase, no emoji) for changelog
 
 The merge commit uses the PR title, and `git-cliff` parses it to generate changelogs.
 
-## Creating Issues with Types
+## Creating Issues
 
-The `gh issue create` command does not support the `--type` flag. Use the REST API instead:
+Use `gh issue create` for labels and milestone, then set the type via API:
 
 ```bash
-# Create issue with type in one call
-gh api repos/{owner}/{repo}/issues -X POST \
-  --field title="✨ Add new feature" \
-  --field body="Description here" \
-  --field type=Feature
+# 1. Create issue with labels and milestone
+gh issue create \
+  --title "✨ Add new feature" \
+  --body "Description here" \
+  --label "area/foo" \
+  --label "area/bar" \
+  --milestone "vX.Y.Z"
 
-# Create with labels and milestone
-gh api repos/{owner}/{repo}/issues -X POST \
-  --field title="🐛 Fix bug" \
-  --field body="Description" \
-  --field type=Bug \
-  --field labels="area/limiter" \
-  --field milestone=1
-
-# Update existing issue type
-gh api -X PATCH repos/{owner}/{repo}/issues/{number} --field type=Bug
+# 2. Set the issue type (gh issue create doesn't support --type)
+gh api -X PATCH repos/{owner}/{repo}/issues/{number} -f type=Feature
 ```
 
 Valid type values: `Epic`, `Feature`, `Bug`, `Task`, `Chore`
