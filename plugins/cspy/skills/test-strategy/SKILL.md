@@ -1,25 +1,18 @@
 ---
 name: test-strategy
-description: Recommend test levels and strategies based on Cosmic Python TDD approach. Use when user says "where should I test", "test strategy", "high gear low gear", or needs testing guidance.
+description: Recommend test levels and strategies based on Cosmic Python TDD approach. Use when user says "where should I test", "test strategy", "high gear low gear", "TDD", "unit tests", "integration tests", or needs testing guidance.
 ---
 
 # Test Level Advisor
 
 Recommend appropriate test levels using the "High Gear / Low Gear" TDD approach from Cosmic Python.
 
-## The Test Pyramid in Cosmic Python
+## Test Pyramid
 
-```
-        /\
-       /  \        E2E Tests
-      /----\       (Few, slow, brittle)
-     /      \
-    /--------\     Service Layer Tests (Integration)
-   /          \    (High gear - most tests here)
-  /------------\
- /              \  Domain Model Tests (Unit)
-/________________\ (Low gear - complex logic only)
-```
+From bottom to top:
+1. **Domain Model Tests (Unit)** - Low gear, complex logic only
+2. **Service Layer Tests (Integration)** - High gear, most tests here
+3. **E2E Tests** - Few, slow, brittle - only for critical paths
 
 ## High Gear vs. Low Gear
 
