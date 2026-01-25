@@ -1,6 +1,6 @@
 ---
 name: cqrs
-description: Analyze and design CQRS read models. Use when user says "optimize reads", "separate queries", "create read model", or needs to split reads from writes.
+description: Analyze and design CQRS read models. Use when user says "optimize reads", "separate queries", "create read model", "read vs write", "denormalized views", or needs to split reads from writes.
 ---
 
 # CQRS Analyzer
@@ -120,9 +120,9 @@ class ProductInventory:
 
 ### 3. Implement Read Side
 
-#### Option A: Direct SQL Queries
+#### Option A: Direct SQL Queries (Recommended)
 
-Simple and effective for most cases:
+Simple and effective for most cases. Start here:
 
 ```python
 from typing import Optional
