@@ -44,8 +44,8 @@ class blockName nolabel
 
 ### Mermaid Block (Color-Coded)
 
-```mermaid
-%%{init: {"block": {"padding": 8}} }%%
+```mermaid 
+%%{init: {"block": {"padding": 8, "nodeSpacing": 0, "rankSpacing": 0}, "themeVariables": {"blockGap": 0}} }%%
 block-beta
     columns 5
 
@@ -57,11 +57,11 @@ block-beta
     d1["ORDER#o002"] d2["ITEM#sku-a"] d3[" "] d4[" "] d5["LineItem"]
     e1["PRODUCT#sku-a"] e2["INFO"] e3["CAT#electronics"] e4["PRICE#299"] e5["Product"]
 
-    classDef header fill:#1a1a2e,color:#fff
-    classDef user fill:#e1f5fe,stroke:#0288d1
-    classDef order fill:#fff3e0,stroke:#f57c00
-    classDef lineitem fill:#f3e5f5,stroke:#7b1fa2
-    classDef product fill:#e8f5e9,stroke:#388e3c
+    classDef header fill:#1a1a2e,color:#fff,stroke:#1a1a2e,stroke-width:7px
+    classDef user fill:#e1f5fe,stroke:#e1f5fe,stroke-width:7px
+    classDef order fill:#fff3e0,stroke:#fff3e0,stroke-width:7px
+    classDef lineitem fill:#f3e5f5,stroke:#f3e5f5,stroke-width:7px
+    classDef product fill:#e8f5e9,stroke:#e8f5e9,stroke-width:7px
 
     class PK,SK,GSI1PK,GSI1SK,Type header
     class a1,a2,a3,a4,a5 user
@@ -133,12 +133,12 @@ block-beta
     H11["PK"] H12["SK"] H13["GSI1PK"] H14["GSI1SK"] H15["Type"]
     f1["PRODUCT#sku-a"] f2["INFO"] f3["CAT#electronics"] f4["PRICE#299"] f5["Product"]
 
-    classDef title fill:#374151,color:#fff
-    classDef header fill:#1a1a2e,color:#fff
-    classDef user fill:#e1f5fe,stroke:#0288d1
-    classDef order fill:#fff3e0,stroke:#f57c00
-    classDef lineitem fill:#f3e5f5,stroke:#7b1fa2
-    classDef product fill:#e8f5e9,stroke:#388e3c
+    classDef title fill:#374151,color:#fff,stroke:#374151,stroke-width:7px
+    classDef header fill:#1a1a2e,color:#fff,stroke:#1a1a2e,stroke-width:7px
+    classDef user fill:#e1f5fe,stroke:#e1f5fe,stroke-width:7px
+    classDef order fill:#fff3e0,stroke:#fff3e0,stroke-width:7px
+    classDef lineitem fill:#f3e5f5,stroke:#f3e5f5,stroke-width:7px
+    classDef product fill:#e8f5e9,stroke:#e8f5e9,stroke-width:7px
 
     class IC1,IC2,IC3 title
     class H1,H2,H3,H4,H5,H6,H7,H8,H9,H10,H11,H12,H13,H14,H15 header
@@ -189,11 +189,13 @@ block-beta
     b4 --> g3
     b6 --> g5
 
-    classDef title fill:#374151,color:#fff
-    classDef header fill:#1a1a2e,color:#fff
+    classDef title fill:#374151,color:#fff,stroke:#374151,stroke-width:7px
+    classDef header fill:#1a1a2e,color:#fff,stroke:#1a1a2e,stroke-width:7px
+    classDef data fill:#f3e8ff,stroke:#f3e8ff,stroke-width:7px
 
     class BT,GT title
     class BP,BS,GP,GS header
+    class b1,b2,b3,b4,b5,b6,g1,g2,g3,g4,g5,g6 data
 ```
 
 ---
@@ -257,11 +259,11 @@ block-beta
         p7["PRODUCT#sku-a"] p8["REVIEW#r001"] p9["RATING#5"] p10["2024-01-15"] p11["Review"] p12["text"]
     end
 
-    classDef header fill:#1a1a2e,color:#fff
+    classDef header fill:#1a1a2e,color:#fff,stroke:#1a1a2e,stroke-width:7px
     classDef nolabel color:transparent
-    classDef user fill:#e3f2fd,stroke:#1976d2
-    classDef order fill:#fff8e1,stroke:#ffa000
-    classDef product fill:#e8f5e9,stroke:#43a047
+    classDef user fill:#e3f2fd,stroke:#e3f2fd,stroke-width:7px
+    classDef order fill:#fff8e1,stroke:#fff8e1,stroke-width:7px
+    classDef product fill:#e8f5e9,stroke:#e8f5e9,stroke-width:7px
 
     class H1,H2,H3,H4,H5,H6 header
     class title nolabel
