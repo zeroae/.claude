@@ -16,20 +16,6 @@ Install via the Claude Code plugin marketplace:
 /plugin install zstd@zeroae.com
 ```
 
-### Git Submodule (Legacy)
-
-Add as a submodule for CLAUDE.md instructions:
-
-```bash
-git submodule add https://github.com/zeroae/.claude.git .claude/rules/zeroae
-```
-
-To update to latest conventions:
-
-```bash
-git submodule update --remote .claude/rules/zeroae
-```
-
 ## Available Plugins
 
 ### zstd (ZeroAE Standards)
@@ -53,10 +39,10 @@ This loads ZeroAE development conventions into your session.
 
 Reference documentation is available at:
 
-- [Commit Conventions](commits.md)
-- [GitHub Project Management](github.md)
-- [Development Principles](principles.md)
-- [Changelog Generation](changelog.md)
+- [Commit Conventions](plugins/zstd/references/commits.md)
+- [GitHub Project Management](plugins/zstd/references/github.md)
+- [Development Principles](plugins/zstd/references/principles.md)
+- [Changelog Generation](plugins/zstd/references/changelog.md)
 
 ## Marketplace Structure
 
@@ -71,10 +57,6 @@ Reference documentation is available at:
 │       ├── skills/
 │       │   └── conventions/   # Conventions skill
 │       └── references/        # Documentation
-├── commits.md                 # Root docs (backwards compat)
-├── github.md
-├── principles.md
-├── changelog.md
 └── README.md
 ```
 
