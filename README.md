@@ -2,55 +2,49 @@
 
 A collection of Claude Code plugins for ZeroAE development standards and workflows.
 
+> **⚠️ Important:** Make sure you trust a plugin before installing, updating, or using it. Review each plugin's source code and documentation before use.
+
 ## Available Plugins
 
-| Plugin | Description | Skills |
-|--------|-------------|--------|
-| `zstd` | Organization-wide development standards and conventions | 1 |
-| `cspy` | Architecture patterns from [Cosmic Python](https://cosmicpython.com) for domain-driven design | 8 |
+| Plugin | Description |
+|--------|-------------|
+| [`zstd`](plugins/zstd/) | Organization-wide development standards and conventions |
+| [`cspy`](plugins/cspy/) | Architecture patterns from [Cosmic Python](https://cosmicpython.com) for domain-driven design |
 
 ## Installation
 
-```bash
+```
 /plugin install {plugin-name}@zeroae.com
 ```
 
-## cspy Plugin
+Or browse in `/plugin > Discover`
 
-Architecture patterns from "Architecture Patterns with Python" by Harry Percival and Bob Gregory.
+## Plugin Structure
 
-**Skills:**
-- `cspy:audit` - Analyze codebase architecture against Cosmic Python patterns
-- `cspy:service-layer` - Generate service layer functions
-- `cspy:uow` - Implement Unit of Work pattern
-- `cspy:domain` - Design domain models (entities, value objects, aggregates)
-- `cspy:events` - Design domain events, commands, and message bus
-- `cspy:cqrs` - Analyze and design CQRS read models
-- `cspy:test-strategy` - Recommend test levels based on TDD approach
-- `cspy:refactor` - Guide incremental pattern adoption
+Each plugin follows a standard structure:
 
-**Agent:**
-- `cspy:architecture-auditor` - Proactively analyze Python code architecture
+```
+plugin-name/
+├── .claude-plugin/
+│   └── plugin.json      # Plugin metadata (required)
+├── skills/              # Skill definitions (optional)
+├── agents/              # Agent definitions (optional)
+├── commands/            # Slash commands (optional)
+├── references/          # Shared documentation (optional)
+├── .mcp.json            # MCP server configuration (optional)
+└── README.md            # Documentation
+```
+
+## Contributing
+
+To add a new plugin:
+
+1. Create plugin directory under `plugins/`
+2. Add `.claude-plugin/plugin.json` manifest
+3. Run `./scripts/validate-plugins.sh` to validate
+4. Submit a pull request
 
 ## Development
-
-### Structure
-
-```
-.
-├── plugins/
-│   ├── cspy/           # Cosmic Python patterns
-│   └── zstd/           # ZeroAE standards
-├── scripts/
-│   └── validate-plugins.sh
-├── .githooks/
-│   └── pre-commit
-└── .github/
-    └── workflows/
-        └── validate-plugins.yml
-```
-
-### Validation
 
 Plugins are validated automatically on commit and in CI:
 
@@ -60,4 +54,4 @@ Plugins are validated automatically on commit and in CI:
 
 ## Documentation
 
-For more information on developing Claude Code plugins, see the [official documentation](https://docs.anthropic.com/en/docs/claude-code/plugins).
+For more information on developing Claude Code plugins, see the [official documentation](https://code.claude.com/docs/en/plugins).
