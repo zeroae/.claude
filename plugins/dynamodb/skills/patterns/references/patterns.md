@@ -6,6 +6,7 @@ Detailed reference for each pattern. Load only the sections needed.
 - [Single-Table Design](#single-table)
 - [Multi-Table Design](#multi-table)
 - [Composite Keys](#composite-keys)
+- [Local Secondary Index (LSI)](#lsi)
 - [GSI Overloading](#gsi-overloading)
 - [Adjacency List](#adjacency-list)
 - [Write Sharding](#write-sharding)
@@ -14,6 +15,15 @@ Detailed reference for each pattern. Load only the sections needed.
 - [Time-Series Tables](#time-series-tables)
 - [Transactions](#transactions)
 - [DynamoDB Streams](#streams)
+
+## Visualization Templates
+
+| Pattern | Layout Template |
+|---------|-----------------|
+| Single-Table, Adjacency List | Item Collection |
+| GSI Overloading, LSI, Sparse GSI | Side-by-Side |
+| Composite Keys, Version Control | Simple Table |
+| Full schema overview | Full Schema |
 
 ---
 
@@ -136,6 +146,75 @@ SK = READING#2024-01-15T10:30:00Z
 ```
 SK between READING#2024-01-14T10:30:00Z and READING#2024-01-15T10:30:00Z
 ```
+
+---
+
+## Local Secondary Index (LSI) {#lsi}
+
+Alternate sort key on the same partition key. Enables different sort orders without duplicating data.
+
+### LSI vs GSI
+
+| Aspect | LSI | GSI |
+|--------|-----|-----|
+| Partition key | Same as base table | Different from base table |
+| Creation | Table creation only | Anytime |
+| Consistency | Strongly consistent available | Eventually consistent only |
+| Throughput | Shares with base table | Separate provisioned capacity |
+| Size limit | 10GB per partition key | No limit |
+| Max per table | 5 | 20 |
+
+### When to Use LSI
+
+- **Strongly consistent reads** on alternate sort orders
+- **Same partition, different sorts** (e.g., orders by date OR by status)
+- **Avoid GSI write costs** (LSI shares base table WCU)
+- **Data fits 10GB per partition** (critical constraint)
+
+### Example - Orders with Multiple Sort Orders
+
+```
+Base Table:
+PK            | SK (by date)      | LSI1SK (by status) | LSI2SK (by total)
+--------------|-------------------|--------------------|-----------------
+USER#alice    | ORDER#2024-01-15  | pending            | 150.00
+USER#alice    | ORDER#2024-01-20  | shipped            | 89.99
+USER#alice    | ORDER#2024-02-01  | pending            | 299.00
+```
+
+**Access patterns:**
+- Orders by date (base table): `PK=USER#alice, SK begins_with ORDER#`
+- Orders by status (LSI1): `PK=USER#alice, LSI1SK=pending`
+- Orders by total descending (LSI2): `PK=USER#alice`, ScanIndexForward=false
+
+### Projections
+
+Choose what attributes to copy into the LSI:
+
+| Projection | Use Case | Storage Cost |
+|------------|----------|--------------|
+| `KEYS_ONLY` | Just need to find items, fetch full item separately | Lowest |
+| `INCLUDE` | Specific attributes needed for query | Medium |
+| `ALL` | Full item access without fetching base | Highest |
+
+**Best practice:** Start with `KEYS_ONLY` or `INCLUDE`, use `ALL` only when you always need the full item.
+
+### Constraints
+
+- **Must define at table creation** - Cannot add LSI to existing table
+- **10GB limit per partition key** - All items + LSI entries under same PK
+- **Max 5 LSIs** - Plan carefully, can't change later
+- **Consumes base table RCU** - Reads count against table capacity
+
+### Anti-Pattern: LSI When GSI is Better
+
+Don't use LSI when:
+- You need to query across different partition keys
+- Partition size might exceed 10GB
+- You might need to add indexes later
+- You need independent scaling
+
+**Rule of thumb:** If unsure, use GSI. LSI is an optimization for specific use cases.
 
 ---
 
