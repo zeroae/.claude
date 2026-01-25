@@ -1,19 +1,11 @@
 ---
 name: domain
-description: Design domain models with entities, value objects, and aggregates. Use when user says "design domain model", "identify entities", "create value object", or needs help with domain-driven design.
+description: Design domain models with entities, value objects, and aggregates. Use when user says "design domain model", "identify entities", "create value object", "DDD", "aggregate design", or needs domain-driven design help.
 ---
 
 # Domain Model Designer
 
 Design domain models following Domain-Driven Design principles from Cosmic Python.
-
-## What is a Domain Model?
-
-The domain model captures the business problem in code:
-- **Entities**: Objects with identity that persists over time
-- **Value Objects**: Immutable objects identified by their attributes
-- **Aggregates**: Clusters of entities/values with consistency boundaries
-- **Domain Services**: Business logic that doesn't belong to a single entity
 
 ## Workflow
 
@@ -303,21 +295,19 @@ def allocate(line: OrderLine, batches: list[Batch]) -> str:
 
 ### 4. Generate Tests
 
+Test domain models at the unit level (low gear):
+
 ```python
 import pytest
 from decimal import Decimal
-from myproject.domain.model import Order, OrderLine, Product, Money
+from myproject.domain.model import Order, Product, Money
 
 
 class TestMoney:
-    """Value object tests."""
+    """Value object: test equality and operations."""
 
     def test_money_equality(self):
         assert Money(Decimal("10.00")) == Money(Decimal("10.00"))
-
-    def test_money_addition(self):
-        total = Money(Decimal("10.00")) + Money(Decimal("5.00"))
-        assert total == Money(Decimal("15.00"))
 
     def test_cannot_add_different_currencies(self):
         with pytest.raises(ValueError):
@@ -325,48 +315,26 @@ class TestMoney:
 
 
 class TestOrder:
-    """Aggregate tests."""
-
-    def test_can_add_line_to_order(self):
-        order = Order(id="order-1", customer_id="cust-1")
-        product = Product(sku="LAMP", name="Desk Lamp", price=Money(Decimal("25")))
-
-        order.add_line(product, quantity=2)
-
-        assert len(order.lines) == 1
-        assert order.lines[0].quantity == 2
+    """Aggregate: test invariants and events."""
 
     def test_cannot_exceed_max_lines(self):
         order = Order(id="order-1", customer_id="cust-1")
-
         for i in range(Order.MAX_LINES):
-            order.add_line(
-                Product(sku=f"SKU-{i}", name=f"Product {i}", price=Money(Decimal("10"))),
-                quantity=1,
-            )
+            order.add_line(Product(sku=f"SKU-{i}", name=f"P{i}", price=Money(Decimal("10"))), 1)
 
         with pytest.raises(OrderTooLarge):
-            order.add_line(
-                Product(sku="EXTRA", name="One Too Many", price=Money(Decimal("10"))),
-                quantity=1,
-            )
+            order.add_line(Product(sku="EXTRA", name="Extra", price=Money(Decimal("10"))), 1)
 
     def test_confirm_raises_event(self):
         order = Order(id="order-1", customer_id="cust-1")
         order.add_line(Product(sku="LAMP", name="Lamp", price=Money(Decimal("25"))), 1)
-
         order.confirm()
 
         assert order.status == "confirmed"
-        assert len(order.events) == 1
         assert isinstance(order.events[0], OrderConfirmed)
-
-    def test_cannot_confirm_empty_order(self):
-        order = Order(id="order-1", customer_id="cust-1")
-
-        with pytest.raises(EmptyOrder):
-            order.confirm()
 ```
+
+See `references/domain-tests.md` for comprehensive test examples.
 
 ## Design Guidelines
 
@@ -400,5 +368,6 @@ class TestOrder:
 
 ## References
 
-- See `references/patterns-summary.md` for pattern overview
-- See `references/project-structure.md` for file organization
+- See `references/domain-tests.md` for comprehensive test examples
+- See `../references/patterns-summary.md` for pattern overview
+- See `../references/project-structure.md` for file organization
