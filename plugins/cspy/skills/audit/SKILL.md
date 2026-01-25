@@ -1,6 +1,6 @@
 ---
 name: audit
-description: Analyze codebase architecture against Cosmic Python patterns. Use when user says "analyze architecture", "check patterns", "audit code", or wants to understand pattern coverage.
+description: Analyze codebase architecture against Cosmic Python patterns. Use when user says "analyze architecture", "check patterns", "audit code", "pattern coverage", or wants to assess DDD adoption.
 ---
 
 # Architecture Pattern Audit
@@ -11,128 +11,66 @@ Analyze the current Python codebase for adherence to Cosmic Python architecture 
 
 ### 1. Discover Project Structure
 
-First, understand the project layout:
-
-```
-- Find Python source directories (src/, app/, or project name)
-- Identify test directories (tests/, test/)
-- Locate configuration files (pyproject.toml, setup.py)
-- Check for existing domain/service/adapter directories
-```
+Find Python source directories (`src/`, `app/`, or project name), test directories (`tests/`), and check for existing `domain/`, `service_layer/`, `adapters/` directories.
 
 ### 2. Pattern Detection Checklist
 
-For each pattern, search for indicators:
+For each pattern, search for key indicators:
 
 #### Repository Pattern
-- [ ] Abstract repository interface exists (`AbstractRepository`, `Repository` protocol)
-- [ ] Concrete implementations (SQLAlchemy, in-memory, file-based)
-- [ ] Fake/mock repository for testing
-- [ ] Repository methods: `add()`, `get()`, `list()`
+- [ ] Abstract repository interface (`AbstractRepository`, `Protocol`)
+- [ ] Concrete implementations (SQLAlchemy, in-memory)
+- [ ] Fake repository for testing
+- [ ] Standard methods: `add()`, `get()`, `list()`
 
-Search patterns:
-```python
-# Look for
-class.*Repository
-def add\(self.*\)
-def get\(self.*\)
-AbstractRepository
-```
+Search: `class.*Repository`, `AbstractRepository`, `def add\(self`
 
 #### Service Layer
-- [ ] Service functions/handlers exist
-- [ ] Services accept dependencies (UoW, repositories)
-- [ ] Services orchestrate domain operations
-- [ ] Clear separation from web handlers
+- [ ] Service functions accept UoW dependency
+- [ ] Orchestration logic separate from web handlers
+- [ ] Explicit transaction management
 
-Search patterns:
-```python
-# Look for
-def.*uow.*AbstractUnitOfWork
-with uow:
-uow.commit()
-```
+Search: `def.*uow.*AbstractUnitOfWork`, `with uow:`, `uow.commit()`
 
 #### Unit of Work
 - [ ] Abstract UoW interface
-- [ ] Context manager implementation (`__enter__`, `__exit__`)
+- [ ] Context manager (`__enter__`, `__exit__`)
 - [ ] `commit()` and `rollback()` methods
-- [ ] Repository access via UoW
 
-Search patterns:
-```python
-# Look for
-class.*UnitOfWork
-def __enter__
-def commit
-def rollback
-```
+Search: `class.*UnitOfWork`, `def __enter__`, `def commit`
 
 #### Domain Model
-- [ ] Entities with identity
-- [ ] Value objects (frozen dataclasses)
-- [ ] Domain logic in model classes (not services)
+- [ ] Entities with identity (`id` field)
+- [ ] Value objects (`@dataclass(frozen=True)`)
+- [ ] Business logic in model classes
 - [ ] No infrastructure imports in domain
 
-Search patterns:
-```python
-# Look for
-@dataclass
-@dataclass(frozen=True)
-class.*:.*\n.*id:
-```
+Search: `@dataclass`, `@dataclass(frozen=True)`
 
 #### Aggregates
-- [ ] Clear aggregate roots
-- [ ] Invariant enforcement in aggregate methods
-- [ ] Single entry point to aggregate cluster
+- [ ] Clear aggregate roots with invariant enforcement
+- [ ] Child entities accessed only through root
 
 #### Domain Events
-- [ ] Event classes defined
-- [ ] Events named in past tense
-- [ ] Events collected and dispatched
+- [ ] Event classes (past tense naming)
+- [ ] Events collected on aggregates
 
-Search patterns:
-```python
-# Look for
-class.*Event
-class.*Created
-class.*Updated
-class.*Deleted
-events.append
-```
+Search: `class.*Event`, `class.*Created`, `events.append`
 
 #### Commands
-- [ ] Command classes defined
-- [ ] Commands named imperatively
-- [ ] Command handlers exist
+- [ ] Command classes (imperative naming)
+- [ ] One handler per command
 
-Search patterns:
-```python
-# Look for
-class.*Command
-class Create.*
-class Update.*
-class Delete.*
-```
+Search: `class.*Command`, `class Create.*`
 
 #### Message Bus
-- [ ] Central message dispatcher
-- [ ] Handler registration
-- [ ] Event collection after command handling
+- [ ] Central dispatcher with handler registration
 
-Search patterns:
-```python
-# Look for
-HANDLERS.*=
-def handle.*message
-messagebus
-```
+Search: `HANDLERS.*=`, `messagebus`
 
 #### CQRS
 - [ ] Separate read models/queries
-- [ ] Write operations through domain model
-- [ ] Direct database queries for reads
+- [ ] Direct SQL for reads, domain model for writes
 
 ### 3. Dependency Direction Check
 
