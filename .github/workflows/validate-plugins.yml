@@ -1,0 +1,40 @@
+name: Validate Plugins
+
+on:
+  push:
+    paths:
+      - 'plugins/**'
+  pull_request:
+    paths:
+      - 'plugins/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Claude Code CLI
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Validate Plugins
+        run: ./scripts/validate-plugins.sh plugins/
+        env:
+          CI: true
+
+      - name: List Modified Skills
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: |
+          echo "### Modified Plugin Files" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} -- plugins/ >> $GITHUB_STEP_SUMMARY || echo "(unable to compute diff)" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
