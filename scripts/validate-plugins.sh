@@ -24,6 +24,17 @@ log_ok() { echo -e "${GREEN}✓ $1${NC}"; }
 echo "=== Claude Code Plugin Validation ==="
 echo ""
 
+# Check marketplace.json exists
+MARKETPLACE=".claude-plugin/marketplace.json"
+if [[ -f "$MARKETPLACE" ]]; then
+    MARKETPLACE_PLUGINS=""
+    if command -v jq &>/dev/null; then
+        MARKETPLACE_PLUGINS=$(jq -r '.plugins[].name' "$MARKETPLACE" 2>/dev/null | tr '\n' ' ')
+    elif command -v python3 &>/dev/null; then
+        MARKETPLACE_PLUGINS=$(python3 -c "import json; print(' '.join(p['name'] for p in json.load(open('$MARKETPLACE')).get('plugins', [])))" 2>/dev/null)
+    fi
+fi
+
 # Find all plugins
 for plugin_dir in "$PLUGINS_DIR"/*/; do
     [[ -d "$plugin_dir" ]] || continue
@@ -55,7 +66,18 @@ for plugin_dir in "$PLUGINS_DIR"/*/; do
         fi
     fi
 
-    # Check 3: Validate each skill
+    # Check 3: Plugin listed in marketplace.json
+    if [[ -n "${MARKETPLACE_PLUGINS:-}" ]]; then
+        if echo "$MARKETPLACE_PLUGINS" | grep -qw "$plugin_name"; then
+            log_ok "Listed in marketplace.json"
+        else
+            log_error "Not listed in marketplace.json"
+        fi
+    elif [[ -f "$MARKETPLACE" ]]; then
+        log_warn "Could not parse marketplace.json (install jq or python3)"
+    fi
+
+    # Check 4: Validate each skill
     skills_dir="$plugin_dir/skills"
     if [[ -d "$skills_dir" ]]; then
         skill_count=0

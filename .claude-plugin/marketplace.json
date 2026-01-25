@@ -20,12 +20,27 @@
     {
       "name": "cspy",
       "source": "./plugins/cspy",
-      "description": "Architecture patterns from Cosmic Python: scaffolding and auditing for domain-driven design",
+      "description": "Architecture patterns from Cosmic Python (cosmicpython.com): scaffolding and auditing for domain-driven design. Based on 'Architecture Patterns with Python' by Harry Percival and Bob Gregory.",
       "version": "1.0.0",
       "keywords": ["architecture", "ddd", "patterns", "python", "cosmic-python", "repository-pattern", "unit-of-work", "cqrs"],
       "category": "development",
-      "license": "CC-BY-NC-ND-3.0",
-      "attribution": "Based on 'Architecture Patterns with Python' by Harry Percival and Bob Gregory"
+      "license": "CC-BY-NC-ND-3.0"
+    },
+    {
+      "name": "dynamodb",
+      "source": "./plugins/dynamodb",
+      "description": "DynamoDB advanced design patterns expertise based on Rick Houlihan's AWS re:Invent talks",
+      "version": "0.1.0",
+      "keywords": ["dynamodb", "nosql", "aws", "data-modeling", "single-table-design"],
+      "category": "development"
+    },
+    {
+      "name": "vidref",
+      "source": "./plugins/vidref",
+      "description": "Extract transcripts and screenshots from videos for Claude Skill reference material",
+      "version": "0.1.0",
+      "keywords": ["video", "transcript", "screenshots", "yt-dlp", "reference-material"],
+      "category": "utilities"
     }
   ]
 }
