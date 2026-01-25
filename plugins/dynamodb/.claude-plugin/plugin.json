@@ -1,0 +1,12 @@
+{
+  "name": "dynamodb",
+  "version": "0.1.0",
+  "description": "DynamoDB advanced design patterns expertise based on Rick Houlihan's AWS re:Invent talks",
+  "author": {
+    "name": "ZeroAE",
+    "url": "https://github.com/zeroae"
+  },
+  "repository": "https://github.com/zeroae/.claude",
+  "license": "MIT",
+  "keywords": ["dynamodb", "nosql", "aws", "data-modeling", "single-table-design"]
+}
