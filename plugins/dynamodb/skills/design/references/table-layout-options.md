@@ -170,34 +170,30 @@ GSI1 serves multiple access patterns:
 • Products by category:  GSI1PK = CAT#electronics
 ```
 
-### Mermaid Block (Stacked)
+### Mermaid Block (Side-by-Side with Links)
 
-Mermaid Block doesn't support true side-by-side nested tables. Use stacked view:
+Uses a 5-column layout with space separators and arrow links showing the projection relationship:
 
 ```mermaid
 %%{init: {"block": {"padding": 8}} }%%
 block-beta
-    columns 4
+    columns 5
 
-    BT["Base Table"]:4
-    BP["PK"] BS["SK"] BG["GSI1PK"] BTy["Type"]
-    b1["USER#u123"] b2["PROFILE"] b3["EMAIL#a@b"] b4["User"]
-    b5["USER#u123"] b6["ORDER#o001"] b7["STATUS#done"] b8["Order"]
-    b9["PRODUCT#sku"] b10["INFO"] b11["CAT#elec"] b12["Product"]
+    BT["Base Table"]:2 space:1 GT["GSI1 (Overloaded)"]:2
+    BP["PK"] BS["SK"] space GP["GSI1PK"] GS["GSI1SK"]
+    b1["USER#123"] b2["PROFILE"] space g1["EMAIL#a@b.com"] g2["USER#123"]
+    b3["USER#123"] b4["ORDER#1"] space g3["STATUS#pending"] g4["2024-01-15"]
+    b5["PROD#sku-a"] b6["INFO"] space g5["CAT#electronics"] g6["PRICE#299"]
 
-    space:4
-
-    GT["GSI1 (Overloaded)"]:4
-    GP["GSI1PK"] GS["GSI1SK"] GBP["Base PK"] GPu["Purpose"]
-    g1["EMAIL#a@b"] g2["USER#u123"] g3["USER#u123"] g4["By email"]
-    g5["STATUS#done"] g6["2024-01-10"] g7["USER#u123"] g8["By status"]
-    g9["CAT#elec"] g10["PRICE#299"] g11["PRODUCT#sku"] g12["By category"]
+    b2 --> g1
+    b4 --> g3
+    b6 --> g5
 
     classDef title fill:#374151,color:#fff
     classDef header fill:#1a1a2e,color:#fff
 
     class BT,GT title
-    class BP,BS,BG,BTy,GP,GS,GBP,GPu header
+    class BP,BS,GP,GS header
 ```
 
 ---
@@ -282,7 +278,7 @@ block-beta
 |----------|-------|---------------|
 | Quick schema sketch | Simple | Simple |
 | Show item collections | Grouped | Nested |
-| Explain GSI overloading | Side-by-Side | Stacked |
+| Explain GSI overloading | Side-by-Side | Side-by-Side with Links |
 | Color-coded entities | - | Color-Coded |
 | Full schema overview | Full Schema | Full Schema (Color) |
 | Terminal output | Any | - |
