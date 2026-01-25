@@ -1,8 +1,18 @@
 # DynamoDB Design Diagrams
 
-Templates for generating schema visualizations.
+Comprehensive diagram reference for DynamoDB design: ERD, table layouts, access patterns, partitions, and architecture.
 
-> **Table Layout Options:** For detailed comparison of ASCII vs Mermaid Block formats, see [table-layout-options.md](table-layout-options.md)
+> **Table Layout Options:** For ASCII + Mermaid Block templates of all table patterns, see [table-layout-options.md](table-layout-options.md)
+
+## Contents
+
+- [ERD](#entity-relationship-diagram-erd)
+- [Table Layout](#table-layout-diagram)
+- [GSI Visualization](#gsi-visualization)
+- [Access Pattern Matrix](#access-pattern-matrix)
+- [Access Pattern Flow](#access-pattern-flow)
+- [Partition Distribution](#partition-distribution)
+- [Architecture Diagrams](#architecture-diagram)
 
 ## Entity-Relationship Diagram (ERD)
 
