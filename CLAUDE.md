@@ -31,7 +31,8 @@ plugins/{name}/
 │       ├── SKILL.md     # Skill definition with YAML frontmatter
 │       └── references/  # Optional: supporting docs for the skill
 ├── agents/              # Optional: autonomous agent definitions
-└── references/          # Optional: shared references across skills
+├── references/          # Optional: shared references across skills
+└── README.md            # Plugin documentation (required)
 ```
 
 **SKILL.md frontmatter requirements:**
@@ -41,6 +42,20 @@ plugins/{name}/
 **plugin.json requirements:**
 - Do not use `agents` or `attribution` fields (not in schema)
 - Use `"skills": "./skills/"` to point to skills directory
+
+**Plugin README.md should include:**
+- Plugin name and description
+- Table of skills with descriptions
+- Table of agents (if any)
+- License information
+
+## Conventions
+
+Follow the official Claude plugins marketplace for conventions:
+- Repository: `anthropics/claude-plugins-official`
+- Docs: https://code.claude.com/docs/en/plugins
+
+When updating documentation, compare against the official marketplace for alignment.
 
 ## Validation
 
