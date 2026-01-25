@@ -4,11 +4,14 @@ Detailed reference for each pattern. Load only the sections needed.
 
 ## Table of Contents
 - [Single-Table Design](#single-table)
+- [Multi-Table Design](#multi-table)
 - [Composite Keys](#composite-keys)
 - [GSI Overloading](#gsi-overloading)
 - [Adjacency List](#adjacency-list)
 - [Write Sharding](#write-sharding)
 - [Sparse GSI](#sparse-gsi)
+- [Version Control](#version-control)
+- [Time-Series Tables](#time-series-tables)
 - [Transactions](#transactions)
 - [DynamoDB Streams](#streams)
 
@@ -43,6 +46,51 @@ ORDER#2024-001  | ITEM#SKU-B          | {qty, price, ...}
 - User profile: `PK=USER#123, SK=PROFILE`
 - User's orders: `PK=USER#123, SK begins_with ORDER#`
 - Order items: `PK=ORDER#2024-001, SK begins_with ITEM#`
+
+---
+
+## Multi-Table Design {#multi-table}
+
+When to use **multiple tables** instead of single-table design.
+
+**Single-table is NOT always best.** Consider multi-table when:
+
+### When to Use Multi-Table
+
+| Scenario | Why Multi-Table Wins |
+|----------|---------------------|
+| **GraphQL APIs** | One resolver per table is simpler |
+| **Multi-tenant encryption** | Each tenant can have separate KMS keys |
+| **Different backup policies** | Hot data vs. cold data retention |
+| **Separate access patterns** | Entities never queried together |
+| **Infrequent Access storage** | Only apply IA class to archival tables |
+| **Independent scaling** | Different capacity needs per entity |
+| **Dedicated streams** | Separate Lambda processors per entity |
+
+### Trade-off Comparison
+
+| Aspect | Single Table | Multi-Table |
+|--------|--------------|-------------|
+| **RCU cost** | Lower (one query) | Higher (multiple queries) |
+| **Latency** | Lower | Higher |
+| **Design complexity** | High (learning curve) | Low (intuitive) |
+| **Ops overhead** | Low (one table) | High (many alarms, IAM) |
+| **Data flexibility** | Limited (shared policies) | High (per-table policies) |
+| **SDK support** | Harder (mixed types) | Easier (typed mappers) |
+
+### Decision Guide
+
+```
+Do you query multiple entity types together?
+├── YES → Single-table (data locality wins)
+└── NO → Do entities have different:
+         ├── Backup requirements? → Multi-table
+         ├── Encryption keys? → Multi-table
+         ├── Access patterns? → Multi-table
+         └── None of the above? → Either works, prefer simpler
+```
+
+**Key insight:** Start with single-table for OLTP apps. Switch to multi-table when you have specific operational requirements that demand it.
 
 ---
 
@@ -203,6 +251,140 @@ USER#4  | PROFILE | ADMIN
 - Any rare attribute that needs efficient filtering
 
 **Benefit:** Small, focused index with low storage and write costs.
+
+---
+
+## Version Control {#version-control}
+
+Track item history while enabling easy access to the latest version.
+
+**Pattern:** Use sort key prefixes `v0_` (latest) and `v1_`, `v2_`, etc. (history).
+
+### How It Works
+
+1. **Create dual copies** for each item:
+   - `v0_` prefix → always contains the latest version
+   - `v1_` prefix → first version (immutable)
+
+2. **On update:**
+   - Create new item with next version prefix (`v2_`, `v3_`, etc.)
+   - Replace contents of `v0_` item with the new data
+
+### Example - Equipment Audits
+
+```
+PK              | SK              | Data
+----------------|-----------------|------------------
+EQUIPMENT#001   | v0_Audit        | {latest audit data}
+EQUIPMENT#001   | v1_Audit        | {first audit - 2024-01}
+EQUIPMENT#001   | v2_Audit        | {second audit - 2024-06}
+EQUIPMENT#001   | v3_Audit        | {third audit - 2024-12}
+```
+
+### Query Patterns
+
+| Access Pattern | Implementation |
+|---------------|----------------|
+| Latest version | `PK=EQUIPMENT#001, SK=v0_Audit` |
+| Full history | `PK=EQUIPMENT#001, SK begins_with v`, filter out `v0_` |
+| Specific version | `PK=EQUIPMENT#001, SK=v2_Audit` |
+
+### Multi-Part Documents
+
+For documents with multiple sections:
+
+```
+PK              | SK                  | Data
+----------------|---------------------|------------------
+DOC#report-123  | v0_Section#intro    | {latest intro}
+DOC#report-123  | v0_Section#body     | {latest body}
+DOC#report-123  | v1_Section#intro    | {v1 intro}
+DOC#report-123  | v1_Section#body     | {v1 body}
+```
+
+**Use for:** Audit trails, compliance requirements, document versioning, configuration history.
+
+---
+
+## Time-Series Tables {#time-series-tables}
+
+For high-volume time-series data, use **one table per time period** instead of a single table.
+
+**Why:** The composite sort key approach (`SK=READING#timestamp`) works for moderate scale, but high-volume time-series (IoT, logs, metrics) needs table-per-period.
+
+### Problems with Single Table
+
+| Issue | Impact |
+|-------|--------|
+| **TTL deletes consume WCU** | Expensive at scale (millions of expirations) |
+| **Hot partitions** | Recent timestamps concentrate all writes |
+| **Capacity waste** | Old data rarely accessed but shares capacity |
+| **No lifecycle management** | Can't easily archive or delete old data |
+
+### Table-Per-Period Pattern
+
+**Structure:**
+```
+events-2024-01  (archived, 1 WCU, minimal RCU)
+events-2024-02  (archived, 1 WCU, minimal RCU)
+events-2024-03  (current month, high capacity)
+events-2024-04  (pre-created, ready for next period)
+```
+
+### Lifecycle Management
+
+```
+Period starts → Create new table with high capacity
+              → Redirect writes to new table
+              → Scale down previous table to 1 WCU
+              → Reduce RCU as access declines
+              → Delete/archive when retention expires
+```
+
+### Capacity Strategy
+
+| Table Age | Write Capacity | Read Capacity |
+|-----------|---------------|---------------|
+| Current | High (match traffic) | High |
+| Previous month | 1 WCU (minimum) | Medium |
+| Older | 1 WCU | Low or on-demand |
+| Past retention | Delete table | - |
+
+### Implementation
+
+```python
+from datetime import datetime
+
+def get_table_name(base_name: str) -> str:
+    """Get current period's table name."""
+    period = datetime.utcnow().strftime('%Y-%m')
+    return f"{base_name}-{period}"
+
+def write_event(event: dict):
+    table_name = get_table_name('events')
+    dynamodb.Table(table_name).put_item(Item=event)
+```
+
+### Partition Key Design
+
+Include date in partition key to align with table boundaries:
+
+```
+PK = DEVICE#sensor-1#2024-03-15
+SK = 10:30:00Z
+```
+
+### Comparison
+
+| Aspect | Sort Key Approach | Table-Per-Period |
+|--------|-------------------|------------------|
+| Scale | Moderate | High (millions/day) |
+| Cost for old data | Same forever | Scale to minimum |
+| TTL cleanup | Consumes WCU | Just drop table |
+| Complexity | Lower | Higher (table management) |
+| Best for | Mixed workloads | Pure time-series |
+
+**Use for:** IoT sensor data, application logs, metrics, clickstream, any write-heavy time-series that ages out.
 
 ---
 

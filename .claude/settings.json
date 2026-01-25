@@ -9,6 +9,17 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Extract the file_path from $ARGUMENTS. If it matches the pattern 'plugins/<plugin-name>/skills/', extract <plugin-name> and output exactly: 'SKILL_MODIFIED(<plugin-name>): Run `claude plugin validate plugins/<plugin-name>` and update `plugins/<plugin-name>/README.md` if patterns were added/changed.' Otherwise output exactly: 'OK'"
+          }
+        ]
+      }
     ]
   },
   "enabledPlugins": {

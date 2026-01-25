@@ -1,5 +1,5 @@
 ---
-name: dynamodb-patterns
+name: patterns
 description: DynamoDB advanced design patterns and data modeling expertise. Use when users ask about DynamoDB schema design, single-table design, access patterns, partition keys, sort keys, GSIs, adjacency lists, NoSQL data modeling, or migrating from relational to DynamoDB.
 ---
 
@@ -29,11 +29,14 @@ Apply NoSQL-native thinking. **Unlearn relational normalization** - it's the har
 | Pattern | When to Use | Reference |
 |---------|-------------|-----------|
 | Single-Table Design | Most apps - multiple entities in one table | [patterns.md#single-table](references/patterns.md) |
+| Multi-Table Design | GraphQL, multi-tenant, separate policies | [patterns.md#multi-table](references/patterns.md) |
 | Composite Keys | Hierarchical data, time-series | [patterns.md#composite-keys](references/patterns.md) |
 | GSI Overloading | Multiple secondary access patterns | [patterns.md#gsi-overloading](references/patterns.md) |
 | Adjacency List | Many-to-many relationships | [patterns.md#adjacency-list](references/patterns.md) |
 | Write Sharding | Hot keys (counters, leaderboards) | [patterns.md#write-sharding](references/patterns.md) |
 | Sparse GSI | Filter rare attributes efficiently | [patterns.md#sparse-gsi](references/patterns.md) |
+| Version Control | Item history with easy latest access | [patterns.md#version-control](references/patterns.md) |
+| Time-Series Tables | High-volume time-series (IoT, logs) | [patterns.md#time-series-tables](references/patterns.md) |
 
 ## Quick Reference
 

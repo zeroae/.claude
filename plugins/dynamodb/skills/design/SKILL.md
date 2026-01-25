@@ -1,5 +1,5 @@
 ---
-name: schema-designer
+name: design
 description: Guided DynamoDB schema design workflow. Use when users want to design a new DynamoDB schema, model their data for DynamoDB, create a table structure from access patterns, or ask "help me design a DynamoDB schema for X".
 ---
 
@@ -25,6 +25,15 @@ Example: Get user by ID, List orders for user, Find orders by status"
 From access patterns, document:
 - **Entities**: User, Order, Product, etc.
 - **Relationships**: 1:1, 1:N, M:N
+
+**Generate ERD** to validate understanding:
+
+```mermaid
+erDiagram
+    USER ||--o{ ORDER : places
+    ORDER ||--|{ ORDER_ITEM : contains
+    ORDER_ITEM }o--|| PRODUCT : references
+```
 
 ### Step 3: Design Primary Keys
 
@@ -57,6 +66,29 @@ Write example items to validate design:
 | ORDER#001   | ITEM#SKU-A   |                |                 |
 ```
 
+**Generate Table Layout** to visualize item collections:
+
+```
+┌─ Item Collection: USER#123 ─────────────────────────────────┐
+│                                                             │
+│  PK          │ SK           │ Type    │ Attributes          │
+│  ────────────┼──────────────┼─────────┼──────────────────── │
+│  USER#123    │ PROFILE      │ User    │ name, email         │
+│  USER#123    │ ORDER#001    │ Order   │ total, status       │
+│  USER#123    │ ORDER#002    │ Order   │ total, status       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+
+┌─ Item Collection: ORDER#001 ────────────────────────────────┐
+│                                                             │
+│  PK          │ SK           │ Type      │ Attributes        │
+│  ────────────┼──────────────┼───────────┼────────────────── │
+│  ORDER#001   │ ITEM#SKU-A   │ OrderItem │ qty, price        │
+│  ORDER#001   │ ITEM#SKU-B   │ OrderItem │ qty, price        │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
 ### Step 6: Verify All Patterns
 
 Map each pattern to its query:
@@ -81,7 +113,13 @@ Output in user's preferred format:
 
 Before completing:
 - [ ] All access patterns documented
+- [ ] ERD generated and validated
 - [ ] Single-table design applied
 - [ ] Every pattern uses Query
 - [ ] GSIs overloaded where possible
 - [ ] Sample data validates design
+- [ ] Table layout diagram generated
+
+## Diagram Reference
+
+See [references/diagrams.md](references/diagrams.md) for diagram templates and examples.

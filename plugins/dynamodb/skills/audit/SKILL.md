@@ -1,5 +1,5 @@
 ---
-name: schema-audit
+name: audit
 description: DynamoDB schema audit workflow. Use when users ask to audit their DynamoDB schema, review their table design, check for issues, or optimize their existing DynamoDB setup. Triggers on "audit my DynamoDB", "review this schema", "check my table design".
 ---
 
