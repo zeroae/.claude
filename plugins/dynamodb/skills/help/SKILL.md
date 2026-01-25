@@ -9,21 +9,20 @@ description: DynamoDB plugin help and usage guide. Use when users ask about the 
 
 | Skill | Command | When to Use |
 |-------|---------|-------------|
+| **schema** | `/dynamodb:schema` | Design new or audit existing DynamoDB schema |
 | **patterns** | `/dynamodb:patterns` | Learn design patterns, ask DynamoDB modeling questions |
-| **design** | `/dynamodb:design` | Design a new schema from scratch |
-| **audit** | `/dynamodb:audit` | Audit an existing schema interactively |
 
 ## Agent
 
 | Agent | Triggers When |
 |-------|---------------|
-| **schema-auditor** | Share DynamoDB code (CDK/CFN/Terraform) + ask for feedback |
+| **auditor** | Share DynamoDB code (CDK/CFN/Terraform) + ask for feedback |
 
 ## Quick Start
 
 | Goal | Action |
 |------|--------|
-| New schema | `/dynamodb:design` |
-| Questions about patterns | Ask directly (auto-triggers patterns) |
-| Review existing schema | `/dynamodb:audit` or share code |
-| Deep autonomous analysis | Share code + ask for review (auto-triggers agent) |
+| New schema | `/dynamodb:schema` → select "new" |
+| Audit existing schema | `/dynamodb:schema` → select "existing" |
+| Questions about patterns | Ask directly or `/dynamodb:patterns` |
+| Deep autonomous analysis | Share code + ask for review (triggers agent) |

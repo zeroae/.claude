@@ -15,6 +15,7 @@ Detailed reference for each pattern. Load only the sections needed.
 - [Time-Series Tables](#time-series-tables)
 - [Transactions](#transactions)
 - [DynamoDB Streams](#streams)
+- [Cost Optimization Techniques](#cost-optimization)
 
 ## Visualization Templates
 
@@ -164,6 +165,8 @@ Alternate sort key on the same partition key. Enables different sort orders with
 | Size limit | 10GB per partition key | No limit |
 | Max per table | 5 | 20 |
 
+**Key insight:** LSI re-sorts data within the same partition. GSI re-aggregates data across different partitions. Choose LSI when you need different sort orders; choose GSI when you need different groupings.
+
 ### When to Use LSI
 
 - **Strongly consistent reads** on alternate sort orders
@@ -198,6 +201,8 @@ Choose what attributes to copy into the LSI:
 | `ALL` | Full item access without fetching base | Highest |
 
 **Best practice:** Start with `KEYS_ONLY` or `INCLUDE`, use `ALL` only when you always need the full item.
+
+**Cost note:** `ALL` projections nearly double WCU since every write updates both base table and index storage.
 
 ### Constraints
 
@@ -545,3 +550,122 @@ DynamoDB (OLTP) → Stream → Lambda → Kinesis Firehose → S3 → Athena (OL
 - `NEW_AND_OLD_IMAGES`: Both (for change detection)
 
 **Best practice:** Use `NEW_AND_OLD_IMAGES` when you need to compute deltas (e.g., increment aggregates by the difference).
+
+### Zero-ETL Integrations
+
+Prefer managed integrations over custom stream processors when available:
+
+| Target | Integration Type | Notes |
+|--------|-----------------|-------|
+| OpenSearch | Zero-ETL (managed) | Automatic sync, no Lambda needed |
+| Redshift | Zero-ETL (managed) | Near real-time analytics |
+| S3 | Export (managed) | Full or incremental exports |
+| Custom targets | Streams + Lambda | Build your own |
+
+**Key insight:** Zero-ETL integrations are out-of-band (don't consume table capacity), auto-scale, and require no infrastructure management. Use custom Streams+Lambda only when no managed integration exists.
+
+### Lambda Event Filtering
+
+When using Streams with Lambda, filter events to reduce invocations:
+
+```python
+# In CDK/SAM, add filter criteria to event source mapping
+event_source = lambda_.EventSourceMapping(
+    self, "StreamMapping",
+    target=handler,
+    event_source_arn=table.table_stream_arn,
+    filter_criteria=lambda_.FilterCriteria.filter([
+        lambda_.FilterRule.is_equal("eventName", "INSERT"),
+        lambda_.FilterRule.exists("dynamodb.NewImage.status")
+    ])
+)
+```
+
+**Why:** Without filtering, Lambda invokes on every stream record. With filtering, you only process relevant events, reducing cost and improving sustainability.
+
+---
+
+## Cost Optimization Techniques {#cost-optimization}
+
+Patterns and configurations to reduce DynamoDB costs.
+
+### Mutable/Immutable Item Split
+
+Separate frequently-updated attributes from static data to reduce WCU consumption.
+
+**Problem:** Updating a 10KB item costs 10 WCU, even if you only change one attribute.
+
+**Solution:** Split into two items with same partition key:
+
+```
+PK              | SK          | Data
+----------------|-------------|------------------
+USER#123        | PROFILE     | {name, email, created_at}  ← Immutable (rarely changes)
+USER#123        | STATS       | {login_count, last_seen}   ← Mutable (changes often)
+```
+
+**Cost comparison:**
+| Approach | Update login_count | WCU |
+|----------|-------------------|-----|
+| Single 10KB item | Update whole item | 10 |
+| Split: 1KB stats item | Update stats only | 1 |
+
+**When to use:** Items >4KB with a mix of static and frequently-updated attributes.
+
+### Standard-IA Table Class
+
+Use **Standard-Infrequent Access** for tables with infrequently accessed data to save up to 60% on storage costs.
+
+| Table Class | Storage Cost | Read/Write Cost | Use Case |
+|-------------|--------------|-----------------|----------|
+| Standard | Higher | Lower | Active data |
+| Standard-IA | 60% lower | 25% higher | Archival, logs, history |
+
+**Best for:**
+- Application logs
+- Order history (after 90 days)
+- Audit trails
+- Gaming achievements
+- Social media archives
+
+**Key insight:** Standard-IA has higher per-request costs but lower storage costs. If reads are infrequent, storage savings dominate.
+
+```python
+# CDK example
+table = dynamodb.Table(
+    self, "HistoryTable",
+    table_class=dynamodb.TableClass.STANDARD_INFREQUENT_ACCESS,
+    # ...
+)
+```
+
+### Pre-Warming On-Demand Tables
+
+On-demand tables can throttle if traffic exceeds double the previous peak. Pre-warm before major events.
+
+**Problem:** New on-demand table starts with limited capacity. Sudden traffic spike causes throttling.
+
+**Solution:** Pre-warm using provisioned mode, then switch:
+
+```bash
+# 1. Create as provisioned with target capacity
+aws dynamodb update-table \
+  --table-name MyTable \
+  --billing-mode PROVISIONED \
+  --provisioned-throughput ReadCapacityUnits=10000,WriteCapacityUnits=5000
+
+# 2. Wait for table to update, then drive test traffic
+
+# 3. Switch to on-demand (retains capacity)
+aws dynamodb update-table \
+  --table-name MyTable \
+  --billing-mode PAY_PER_REQUEST
+```
+
+**When to pre-warm:**
+- Before product launches
+- Before marketing campaigns
+- Before load tests
+- New tables expecting immediate high traffic
+
+**Key insight:** On-demand tables remember their previous peak. Pre-warming establishes that baseline.
