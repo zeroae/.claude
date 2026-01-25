@@ -1,0 +1,21 @@
+{
+  "name": "zeroae.com",
+  "owner": {
+    "name": "ZeroAE"
+  },
+  "metadata": {
+    "description": "ZeroAE Claude Code extensions and development standards",
+    "version": "1.0.0",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "zstd",
+      "source": "./plugins/zstd",
+      "description": "Organization-wide development standards and conventions",
+      "version": "1.0.0",
+      "keywords": ["conventions", "standards", "commits", "github"],
+      "category": "development"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "zstd",
+  "version": "1.0.0",
+  "description": "ZeroAE development standards: commits, GitHub workflows, and coding principles",
+  "author": {
+    "name": "ZeroAE"
+  },
+  "repository": "https://github.com/zeroae/.claude",
+  "license": "MIT",
+  "keywords": ["conventions", "standards", "commits", "github", "changelog"],
+  "skills": "./skills/"
+}
