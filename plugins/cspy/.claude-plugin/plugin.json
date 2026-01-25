@@ -1,14 +1,12 @@
 {
   "name": "cspy",
   "version": "1.0.0",
-  "description": "Architecture patterns from Cosmic Python: scaffolding and auditing for domain-driven design",
+  "description": "Architecture patterns from Cosmic Python (cosmicpython.com): scaffolding and auditing for domain-driven design. Based on 'Architecture Patterns with Python' by Harry Percival and Bob Gregory.",
   "author": {
     "name": "ZeroAE"
   },
   "repository": "https://github.com/zeroae/.claude",
   "license": "CC-BY-NC-ND-3.0",
-  "attribution": "Based on 'Architecture Patterns with Python' by Harry Percival and Bob Gregory (cosmicpython.com)",
   "keywords": ["architecture", "ddd", "patterns", "python", "cosmic-python", "repository-pattern", "unit-of-work", "cqrs", "event-driven"],
-  "skills": "./skills/",
-  "agents": "./agents/"
+  "skills": "./skills/"
 }

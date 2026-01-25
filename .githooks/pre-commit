@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Pre-commit hook: Validate modified plugins
+# Install: git config core.hooksPath .githooks
+
+set -euo pipefail
+
+# Get staged files
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+# Check if any plugin files are staged
+if echo "$STAGED_FILES" | grep -qE "^plugins/.*/(plugin\.json|SKILL\.md|.*\.md)$"; then
+    echo "Plugin files staged for commit, running validation..."
+
+    # Find which plugins were modified
+    MODIFIED_PLUGINS=$(echo "$STAGED_FILES" | grep "^plugins/" | cut -d/ -f2 | sort -u)
+
+    # Validate each modified plugin
+    for plugin in $MODIFIED_PLUGINS; do
+        if [[ -d "plugins/$plugin" ]]; then
+            ./scripts/validate-plugins.sh "plugins/$plugin/.." 2>&1 | grep -A100 "Plugin: $plugin" | head -20
+        fi
+    done
+fi
+
+exit 0
