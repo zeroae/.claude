@@ -1,5 +1,5 @@
 ---
-name: schema-auditor
+name: auditor
 description: Deep DynamoDB schema analysis specialist. Use proactively when user shares DynamoDB table definitions (CDK, CloudFormation, Terraform, or code) and asks for feedback, review, or optimization. Performs thorough multi-dimensional analysis beyond interactive workflows.
 model: sonnet
 color: orange
