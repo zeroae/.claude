@@ -1,19 +1,11 @@
 ---
 name: service-layer
-description: Generate service layer functions following Cosmic Python patterns. Use when user says "create service function", "add use case", "implement handler", or needs orchestration code.
+description: Generate service layer functions following Cosmic Python patterns. Use when user says "create service function", "add use case", "implement handler", "orchestration code", or needs to wire up domain operations.
 ---
 
 # Service Layer Generator
 
 Generate service layer functions that orchestrate domain operations following Cosmic Python patterns.
-
-## What is a Service Layer?
-
-The service layer sits between entrypoints (API, CLI) and the domain model. It:
-- Orchestrates use cases
-- Manages transactions via Unit of Work
-- Coordinates between aggregates
-- Returns results to callers
 
 ## Workflow
 
@@ -139,96 +131,6 @@ def test_use_case_raises_on_validation_error():
         use_case_name(param1="invalid", param2=-1, uow=uow)
 ```
 
-## Common Use Case Patterns
-
-### Create Entity
-
-```python
-def create_order(
-    customer_id: str,
-    items: list[dict],
-    uow: AbstractUnitOfWork,
-) -> str:
-    """Create a new order for a customer."""
-    with uow:
-        customer = uow.customers.get(customer_id)
-        if not customer:
-            raise CustomerNotFound(customer_id)
-
-        order = Order.create(
-            customer_id=customer_id,
-            items=[OrderLine(**item) for item in items],
-        )
-        uow.orders.add(order)
-        uow.commit()
-
-    return order.id
-```
-
-### Update Entity
-
-```python
-def update_order_status(
-    order_id: str,
-    new_status: str,
-    uow: AbstractUnitOfWork,
-) -> None:
-    """Update an order's status."""
-    with uow:
-        order = uow.orders.get(order_id)
-        if not order:
-            raise OrderNotFound(order_id)
-
-        order.update_status(new_status)  # Domain validates status transition
-        uow.commit()
-```
-
-### Cross-Aggregate Operation
-
-```python
-def allocate_stock(
-    order_id: str,
-    sku: str,
-    qty: int,
-    uow: AbstractUnitOfWork,
-) -> str:
-    """Allocate stock to an order line."""
-    with uow:
-        order = uow.orders.get(order_id)
-        if not order:
-            raise OrderNotFound(order_id)
-
-        batches = uow.batches.list_by_sku(sku)
-        if not batches:
-            raise OutOfStock(sku)
-
-        # Domain logic determines which batch to allocate from
-        batch_ref = allocate(order.get_line(sku), batches)
-        uow.commit()
-
-    return batch_ref
-```
-
-### Query Operation (CQRS Read Side)
-
-For read-only operations, you may bypass the domain model:
-
-```python
-def get_order_summary(order_id: str) -> dict | None:
-    """Get order summary for display (read model)."""
-    # Direct query - no UoW needed for reads
-    return db.execute("""
-        SELECT o.id, o.status, o.total,
-               c.name as customer_name,
-               COUNT(ol.id) as line_count
-        FROM orders o
-        JOIN customers c ON o.customer_id = c.id
-        LEFT JOIN order_lines ol ON ol.order_id = o.id
-        WHERE o.id = :order_id
-        GROUP BY o.id, c.name
-    """, {"order_id": order_id}).fetchone()
-```
-
 ## Anti-Patterns to Avoid
 
 ### Don't Create UoW Inside Function
@@ -298,5 +200,6 @@ def create_order(customer_id: str, items: list[dict], uow: AbstractUnitOfWork):
 
 ## References
 
-- See `references/patterns-summary.md` for the full service layer pattern
-- See `references/project-structure.md` for where to place service functions
+- See `references/use-case-patterns.md` for common patterns (create, update, query, cross-aggregate)
+- See `../references/patterns-summary.md` for the full service layer pattern
+- See `../references/project-structure.md` for where to place service functions
