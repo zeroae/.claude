@@ -1,72 +1,33 @@
-# ZeroAE Claude Code Extensions
+# ZeroAE Claude Code Plugins
 
-Organization-wide Claude Code extensions, development standards, and conventions.
+A collection of Claude Code plugins for ZeroAE development standards and workflows.
+
+## Structure
+
+- **`/plugins`** - Plugins developed and maintained by ZeroAE
 
 ## Installation
 
-### Plugin Marketplace (Recommended)
-
-Install via the Claude Code plugin marketplace:
-
-```bash
-# Add ZeroAE marketplace
-/plugin marketplace add zeroae/.claude
-
-# Install development standards plugin
-/plugin install zstd@zeroae.com
-```
+To install, run `/plugin install {plugin-name}@zeroae.com`
 
 ## Available Plugins
 
-### zstd (ZeroAE Standards)
+| Plugin | Description |
+|--------|-------------|
+| `zstd` | Organization-wide development standards and conventions |
 
-Organization-wide development standards including:
+## Plugin Structure
 
-- **Commit conventions** - Conventional Commits with gitmoji
-- **GitHub workflows** - Issues, PRs, labels, and releases
-- **Development principles** - Code style and best practices
-- **Changelog automation** - git-cliff configuration
-
-#### Using the Conventions Skill
-
-```bash
-/zstd:conventions
 ```
-
-This loads ZeroAE development conventions into your session.
+plugins/
+└── zstd/
+    ├── .claude-plugin/
+    │   └── plugin.json
+    ├── skills/
+    │   └── conventions/
+    └── references/
+```
 
 ## Documentation
 
-Reference documentation is available at:
-
-- [Commit Conventions](plugins/zstd/references/commits.md)
-- [GitHub Project Management](plugins/zstd/references/github.md)
-- [Development Principles](plugins/zstd/references/principles.md)
-- [Changelog Generation](plugins/zstd/references/changelog.md)
-
-## Marketplace Structure
-
-```
-.claude/
-├── .claude-plugin/
-│   └── marketplace.json       # Marketplace registry
-├── plugins/
-│   └── zstd/                  # Standards plugin
-│       ├── .claude-plugin/
-│       │   └── plugin.json    # Plugin manifest
-│       ├── skills/
-│       │   └── conventions/   # Conventions skill
-│       └── references/        # Documentation
-└── README.md
-```
-
-## Contributing
-
-1. Fork this repository
-2. Create a feature branch
-3. Make your changes following the conventions
-4. Submit a pull request
-
-## License
-
-MIT
+For more information on developing Claude Code plugins, see the [official documentation](https://docs.anthropic.com/en/docs/claude-code/plugins).
