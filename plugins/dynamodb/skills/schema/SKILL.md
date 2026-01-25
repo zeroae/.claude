@@ -1,6 +1,7 @@
 ---
 name: schema
 description: DynamoDB schema design and audit workflow. Use when users want to design a new DynamoDB schema, audit an existing schema, review table design, model data for DynamoDB, or ask "help me with my DynamoDB schema". Triggers on design, audit, review, optimize, or create DynamoDB tables.
+user-invocable: true
 ---
 
 # DynamoDB Schema Workflow

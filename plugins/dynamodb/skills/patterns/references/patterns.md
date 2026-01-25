@@ -6,6 +6,7 @@ Detailed reference for each pattern. Load only the sections needed.
 - [Single-Table Design](#single-table)
 - [Multi-Table Design](#multi-table)
 - [Composite Keys](#composite-keys)
+- [Geohashing](#geohashing)
 - [Local Secondary Index (LSI)](#lsi)
 - [GSI Overloading](#gsi-overloading)
 - [Adjacency List](#adjacency-list)
@@ -147,6 +148,51 @@ SK = READING#2024-01-15T10:30:00Z
 ```
 SK between READING#2024-01-14T10:30:00Z and READING#2024-01-15T10:30:00Z
 ```
+
+---
+
+## Geohashing {#geohashing}
+
+Encode geographic coordinates as hierarchical hash strings for spatial range queries.
+
+### How It Works
+
+1. Divide map area into quadrants
+2. Recursively subdivide to desired precision
+3. Concatenate quadrant IDs into a hash string
+4. Use the hash as a sort key
+
+```
+Precision:  Low ──────────────────────────── High
+Geohash:    9    9q    9q8y    9q8yyk    9q8yykv
+Area:       ~5000km  ~600km  ~80km  ~600m  ~80m
+```
+
+### Key Design
+
+```
+PK               | SK (geohash)  | Data
+-----------------|---------------|------------------
+REGION#us-west   | 9q8yyk        | {name: "SF Office", lat, lng}
+REGION#us-west   | 9q5ctr        | {name: "LA Office", lat, lng}
+REGION#us-east   | dqcjqc        | {name: "NYC Office", lat, lng}
+```
+
+### Queries
+
+| Query | Implementation |
+|-------|---------------|
+| All locations in broad area | `PK=REGION#us-west, SK begins_with 9q` |
+| Locations near SF | `PK=REGION#us-west, SK begins_with 9q8y` |
+| Specific block | `PK=REGION#us-west, SK begins_with 9q8yyk` |
+
+**Finding nearby items:** Query the target geohash prefix plus adjacent prefixes (8 neighbors). Shorter prefix = larger search radius.
+
+### Library
+
+AWS provides a [DynamoDB Geo Library](https://github.com/amazon-archives/dynamodb-geo) (Java only) that handles geohash encoding, neighbor calculations, and radius/rectangle queries automatically.
+
+**Key insight:** Geohashing applies the same `begins_with` technique as composite keys but to spatial data. Shorter prefixes match larger areas, longer prefixes match smaller areas.
 
 ---
 

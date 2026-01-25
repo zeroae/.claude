@@ -1,6 +1,7 @@
 ---
 name: help
 description: DynamoDB plugin help and usage guide. Use when users ask about the DynamoDB plugin, want to know what skills are available, ask "how do I use the DynamoDB plugin", or say "/dynamodb:help".
+context: fork
 ---
 
 # DynamoDB Plugin Help

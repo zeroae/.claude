@@ -1,6 +1,7 @@
 ---
 name: patterns
 description: DynamoDB advanced design patterns and data modeling expertise. Use when users ask about DynamoDB schema design, single-table design, access patterns, partition keys, sort keys, GSIs, adjacency lists, NoSQL data modeling, or migrating from relational to DynamoDB.
+user-invocable: true
 ---
 
 # DynamoDB Advanced Design Patterns
@@ -31,6 +32,7 @@ Apply NoSQL-native thinking. **Unlearn relational normalization** - it's the har
 | Single-Table Design | Most apps - multiple entities in one table | [patterns.md#single-table](references/patterns.md) |
 | Multi-Table Design | GraphQL, multi-tenant, separate policies | [patterns.md#multi-table](references/patterns.md) |
 | Composite Keys | Hierarchical data, time-series | [patterns.md#composite-keys](references/patterns.md) |
+| Geohashing | Spatial/location queries | [patterns.md#geohashing](references/patterns.md) |
 | Local Secondary Index | Alternate sort order, strongly consistent reads | [patterns.md#lsi](references/patterns.md) |
 | GSI Overloading | Multiple secondary access patterns | [patterns.md#gsi-overloading](references/patterns.md) |
 | Adjacency List | Many-to-many relationships | [patterns.md#adjacency-list](references/patterns.md) |
