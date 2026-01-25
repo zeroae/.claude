@@ -1,19 +1,11 @@
 ---
 name: uow
-description: Implement Unit of Work pattern for atomic transactions. Use when user says "add unit of work", "implement transactions", "manage database sessions", or needs atomic operations.
+description: Implement Unit of Work pattern for atomic transactions. Use when user says "add unit of work", "implement transactions", "manage database sessions", "atomic operations", or needs transaction boundaries.
 ---
 
 # Unit of Work Implementer
 
 Implement the Unit of Work pattern to manage atomic transactions across repositories.
-
-## What is Unit of Work?
-
-The Unit of Work pattern:
-- Tracks changes to aggregates during a business transaction
-- Commits all changes atomically (all succeed or all fail)
-- Provides a single point for transaction management
-- Enables collecting domain events after commit
 
 ## Workflow
 
@@ -253,101 +245,6 @@ class TestSqlAlchemyUnitOfWork:
             assert uow.orders.get("rolled-back") is None
 ```
 
-## Async Unit of Work
-
-For async applications (FastAPI with async SQLAlchemy):
-
-```python
-from contextlib import asynccontextmanager
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
-
-
-class AbstractAsyncUnitOfWork(ABC):
-    """Async Unit of Work base class."""
-
-    async def __aenter__(self) -> Self:
-        return self
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
-        await self.rollback()
-
-    @abstractmethod
-    async def commit(self) -> None:
-        raise NotImplementedError
-
-    @abstractmethod
-    async def rollback(self) -> None:
-        raise NotImplementedError
-
-
-class SqlAlchemyAsyncUnitOfWork(AbstractAsyncUnitOfWork):
-    """Async SQLAlchemy Unit of Work."""
-
-    def __init__(self, session_factory: async_sessionmaker[AsyncSession]):
-        self.session_factory = session_factory
-
-    async def __aenter__(self) -> Self:
-        self.session = self.session_factory()
-        self.orders = SqlAlchemyAsyncOrderRepository(self.session)
-        return await super().__aenter__()
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb) -> None:
-        await super().__aexit__(exc_type, exc_val, exc_tb)
-        await self.session.close()
-
-    async def commit(self) -> None:
-        await self.session.commit()
-
-    async def rollback(self) -> None:
-        await self.session.rollback()
-```
-
-Usage in async service:
-
-```python
-async def create_order(
-    customer_id: str,
-    items: list[dict],
-    uow: AbstractAsyncUnitOfWork,
-) -> str:
-    async with uow:
-        customer = await uow.customers.get(customer_id)
-        if not customer:
-            raise CustomerNotFound(customer_id)
-
-        order = Order.create(customer_id, items)
-        await uow.orders.add(order)
-        await uow.commit()
-
-    return order.id
-```
-
-## Integration with Dependency Injection
-
-For FastAPI:
-
-```python
-from fastapi import Depends
-
-def get_uow() -> Generator[AbstractUnitOfWork, None, None]:
-    """Dependency that provides a Unit of Work."""
-    uow = SqlAlchemyUnitOfWork(session_factory)
-    yield uow
-
-
-@app.post("/orders")
-def create_order_endpoint(
-    request: CreateOrderRequest,
-    uow: AbstractUnitOfWork = Depends(get_uow),
-):
-    order_id = create_order(
-        customer_id=request.customer_id,
-        items=request.items,
-        uow=uow,
-    )
-    return {"order_id": order_id}
-```
-
 ## Common Issues
 
 ### Session Already Closed
@@ -388,5 +285,6 @@ with uow:
 
 ## References
 
-- See `references/patterns-summary.md` for the full UoW pattern
-- See `references/project-structure.md` for file organization
+- See `references/async-uow.md` for async/await implementation and FastAPI integration
+- See `../references/patterns-summary.md` for the full UoW pattern
+- See `../references/project-structure.md` for file organization
