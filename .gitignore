@@ -1,0 +1,20 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code user-specific files
+.claude/settings.local.json
+.claude/*.local.md
+
+# Editor
+.idea/
+*.swp
+*.swo
+
+# Python (if using Python hooks)
+__pycache__/
+*.pyc
+.venv/
+
+# Node (if using Node tools)
+node_modules/
