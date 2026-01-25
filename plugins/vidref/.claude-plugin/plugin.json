@@ -1,0 +1,13 @@
+{
+  "name": "vidref",
+  "version": "0.1.0",
+  "description": "Extract transcripts and screenshots from videos for Claude Skill reference material",
+  "author": {
+    "name": "ZeroAE",
+    "url": "https://github.com/zeroae"
+  },
+  "repository": "https://github.com/zeroae/.claude",
+  "license": "MIT",
+  "keywords": ["video", "transcript", "screenshots", "yt-dlp", "reference-material"],
+  "skills": "./skills/"
+}

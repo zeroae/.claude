@@ -1,0 +1,168 @@
+#!/bin/bash
+set -euo pipefail
+
+# vidref - Extract transcripts and screenshots from videos
+# Usage: vidref <video-url> [output-dir]
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PLUGIN_DIR="$(dirname "$SCRIPT_DIR")"
+
+show_help() {
+    cat << EOF
+vidref - Video to Reference Material
+
+Usage: vidref <video-url> [output-dir]
+
+Arguments:
+  video-url     Video URL (YouTube, Vimeo, etc. - any yt-dlp supported site)
+  output-dir    Output directory (default: ./output)
+
+Output:
+  output/
+  ├── transcript.vtt        # Timestamped transcript
+  ├── chapters.json         # Chapter metadata
+  ├── slides/
+  │   ├── 00_00_00.png      # Screenshots every 30s
+  │   └── ...
+  └── reference.md          # Combined markdown
+
+Dependencies: yt-dlp, ffmpeg, jq, python3
+EOF
+}
+
+if [[ $# -lt 1 ]] || [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
+    show_help
+    exit 0
+fi
+
+URL="$1"
+OUTPUT_DIR="${2:-output}"
+
+# Create output directories
+mkdir -p "$OUTPUT_DIR/slides"
+
+echo "==> Downloading metadata and transcript..."
+yt-dlp --write-auto-sub --sub-lang en --skip-download \
+       --write-info-json -o "$OUTPUT_DIR/video" "$URL" 2>&1 || true
+
+# Check if we got subtitles, if not try other formats
+if ! ls "$OUTPUT_DIR"/video.*.vtt 2>/dev/null; then
+    echo "==> Auto-subs not available, trying manual subs..."
+    yt-dlp --write-sub --sub-lang en --skip-download \
+           -o "$OUTPUT_DIR/video" "$URL" 2>&1 || true
+fi
+
+# Rename VTT file to transcript.vtt if found
+VTT_FILE=$(ls "$OUTPUT_DIR"/video.*.vtt 2>/dev/null | head -1 || true)
+if [[ -n "$VTT_FILE" ]]; then
+    mv "$VTT_FILE" "$OUTPUT_DIR/transcript.vtt"
+    echo "==> Transcript saved to $OUTPUT_DIR/transcript.vtt"
+else
+    echo "==> Warning: No transcript found"
+fi
+
+# Extract chapters from info.json
+INFO_JSON="$OUTPUT_DIR/video.info.json"
+if [[ -f "$INFO_JSON" ]]; then
+    jq '{
+        title: .title,
+        duration: .duration,
+        chapters: (.chapters // [])
+    }' "$INFO_JSON" > "$OUTPUT_DIR/chapters.json"
+    echo "==> Chapters saved to $OUTPUT_DIR/chapters.json"
+else
+    echo "==> Error: Failed to download video metadata"
+    exit 1
+fi
+
+# Check if video has chapters
+CHAPTER_COUNT=$(jq '.chapters | length' "$OUTPUT_DIR/chapters.json")
+if [[ "$CHAPTER_COUNT" -eq 0 ]]; then
+    echo "==> Video has no chapters, creating timestamps at regular intervals..."
+    DURATION=$(jq '.duration' "$OUTPUT_DIR/chapters.json")
+    # Create chapters every 5 minutes or at least 5 chapters
+    INTERVAL=300
+    if (( DURATION < 1500 )); then
+        INTERVAL=$((DURATION / 5))
+    fi
+
+    # Generate synthetic chapters
+    python3 << EOF
+import json
+duration = $DURATION
+interval = max($INTERVAL, 60)
+chapters = []
+t = 0
+i = 0
+while t < duration:
+    chapters.append({
+        "start_time": t,
+        "end_time": min(t + interval, duration),
+        "title": f"Segment {i + 1}"
+    })
+    t += interval
+    i += 1
+
+with open("$OUTPUT_DIR/chapters.json", "r") as f:
+    data = json.load(f)
+data["chapters"] = chapters
+with open("$OUTPUT_DIR/chapters.json", "w") as f:
+    json.dump(data, f, indent=2)
+EOF
+    CHAPTER_COUNT=$(jq '.chapters | length' "$OUTPUT_DIR/chapters.json")
+fi
+
+echo "==> Found $CHAPTER_COUNT chapters"
+
+# Download video for screenshot extraction
+echo "==> Downloading video for screenshot extraction..."
+yt-dlp -f "bestvideo[height<=1080]+bestaudio/best[height<=1080]/best" \
+       --merge-output-format mp4 \
+       -o "$OUTPUT_DIR/video.mp4" "$URL" 2>&1
+
+if [[ ! -f "$OUTPUT_DIR/video.mp4" ]]; then
+    echo "==> Error: Failed to download video"
+    exit 1
+fi
+
+# Extract screenshots at regular intervals (every 30 seconds)
+DURATION=$(jq '.duration' "$OUTPUT_DIR/chapters.json")
+INTERVAL=30
+SCREENSHOT_COUNT=$((${DURATION%.*} / INTERVAL + 1))
+
+echo "==> Extracting $SCREENSHOT_COUNT screenshots (every ${INTERVAL}s)..."
+for ((i=0; i<SCREENSHOT_COUNT; i++)); do
+    timestamp=$((i * INTERVAL))
+
+    # Convert timestamp to HH_MM_SS format
+    hours=$(printf "%02d" $((timestamp / 3600)))
+    minutes=$(printf "%02d" $(((timestamp % 3600) / 60)))
+    seconds=$(printf "%02d" $((timestamp % 60)))
+    time_str="${hours}_${minutes}_${seconds}"
+
+    output_file="$OUTPUT_DIR/slides/${time_str}.png"
+
+    # Show progress every 10 screenshots
+    if (( i % 10 == 0 )); then
+        echo "    Progress: $i/$SCREENSHOT_COUNT screenshots..."
+    fi
+
+    ffmpeg -y -ss "$timestamp" -i "$OUTPUT_DIR/video.mp4" \
+           -frames:v 1 -q:v 2 "$output_file" 2>/dev/null
+done
+
+echo "==> Extracted $SCREENSHOT_COUNT screenshots"
+
+echo "==> Screenshots saved to $OUTPUT_DIR/slides/"
+
+# Generate reference.md using Python helper
+echo "==> Generating reference.md..."
+python3 "$PLUGIN_DIR/vidref.py" "$OUTPUT_DIR"
+
+echo "==> Done! Output saved to $OUTPUT_DIR/"
+echo ""
+echo "Files created:"
+ls -la "$OUTPUT_DIR/"
+echo ""
+echo "Slides:"
+ls -la "$OUTPUT_DIR/slides/" 2>/dev/null || echo "  (no slides)"
