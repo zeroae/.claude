@@ -8,5 +8,6 @@
   },
   "repository": "https://github.com/zeroae/.claude",
   "license": "MIT",
-  "keywords": ["dynamodb", "nosql", "aws", "data-modeling", "single-table-design"]
+  "keywords": ["dynamodb", "nosql", "aws", "data-modeling", "single-table-design"],
+  "skills": "./skills/"
 }
