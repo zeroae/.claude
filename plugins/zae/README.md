@@ -27,7 +27,7 @@ On Claude Code 2.1.275 or later, one step does both:
 
 | Style | Description | From |
 |-------|-------------|------|
-| `zae:plain` | Plain, direct prose with no AI tells, leading with the answer. Keeps Claude Code's coding instructions | Our own: `unslop`'s rules condensed to six, in the shape of Claude Code's built-in styles |
+| `zae:plain` | Plain, direct prose with no AI tells, leading with the answer. Keeps Claude Code's coding instructions | Our own: `unslop`'s chat rules, in the shape of Claude Code's built-in styles |
 
 An output style applies to every reply in a session, so it is opt-in: pick it
 with `/output-style zae:plain`, or set `"outputStyle": "zae:plain"` in
