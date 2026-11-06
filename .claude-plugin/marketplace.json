@@ -46,7 +46,7 @@
       "name": "zae",
       "source": "./plugins/zae",
       "description": "Hand-picked skills, agents, commands and output styles from other plugins, pinned to an upstream commit, plus our own",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "keywords": ["curated", "skills", "writing", "vendored"],
       "category": "productivity"
     }
