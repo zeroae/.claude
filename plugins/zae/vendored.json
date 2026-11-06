@@ -1,0 +1,15 @@
+{
+  "components": {
+    "skills/unslop": {
+      "upstream": "https://github.com/michael-denyer/pstack-claude.git",
+      "path": "plugins/pstack/skills/unslop",
+      "ref": "d88063f3355a5ecff0e6dbb890a11bab4b08bc2e",
+      "object": "0c1e9c3014f788044725640bb0159562b5543068",
+      "license": "MIT",
+      "license_file": "licenses/michael-denyer__pstack-claude.txt",
+      "vendored_on": "2026-11-05",
+      "content_sha256": "acbe5327bed34310a121e825e5959c09c3ac63436ab873a252fff3d45c4b2bc6",
+      "needs_review": []
+    }
+  }
+}

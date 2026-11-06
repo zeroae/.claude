@@ -41,6 +41,14 @@
       "version": "0.1.0",
       "keywords": ["video", "transcript", "screenshots", "yt-dlp", "reference-material"],
       "category": "utilities"
+    },
+    {
+      "name": "zae",
+      "source": "./plugins/zae",
+      "description": "Hand-picked skills, agents, commands and output styles from other plugins, pinned to an upstream commit, plus our own",
+      "version": "0.1.0",
+      "keywords": ["curated", "skills", "writing", "vendored"],
+      "category": "productivity"
     }
   ]
 }

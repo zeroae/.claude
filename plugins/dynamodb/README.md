@@ -18,14 +18,13 @@ Expert guidance on DynamoDB schema design using NoSQL-native patterns:
 |-------|---------------|
 | `help` | "How do I use the DynamoDB plugin?", `/dynamodb:help` |
 | `patterns` | Asking about DynamoDB design, access patterns, single-table design, GSIs |
-| `design` | "Help me design a DynamoDB schema for X", "Model my data for DynamoDB" |
-| `audit` | "Audit my DynamoDB schema", "Review this table design", "Check for issues" |
+| `schema` | Design a new schema ("Help me design a DynamoDB schema for X", "Model my data for DynamoDB") or audit an existing one ("Audit my DynamoDB schema", "Review this table design") |
 
 ## Agents
 
 | Agent | Triggers When |
 |-------|---------------|
-| `schema-auditor` | User shares DynamoDB code (CDK/CloudFormation/Terraform) and asks for feedback |
+| `auditor` | User shares DynamoDB code (CDK/CloudFormation/Terraform) and asks for feedback |
 
 ## Usage Examples
 
@@ -54,7 +53,7 @@ Expert guidance on DynamoDB schema design using NoSQL-native patterns:
 
 ## Diagram Outputs
 
-The `design` skill generates visual diagrams to help understand schema structure:
+The `schema` skill generates visual diagrams to help understand schema structure:
 
 | Diagram Type | Format | Purpose |
 |--------------|--------|---------|
