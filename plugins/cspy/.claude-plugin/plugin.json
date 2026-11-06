@@ -5,7 +5,7 @@
   "author": {
     "name": "ZeroAE"
   },
-  "repository": "https://github.com/zeroae/.claude",
+  "repository": "https://github.com/zeroae/claude-plugins",
   "license": "CC-BY-NC-ND-3.0",
   "keywords": ["architecture", "ddd", "patterns", "python", "cosmic-python", "repository-pattern", "unit-of-work", "cqrs", "event-driven"],
   "skills": "./skills/"

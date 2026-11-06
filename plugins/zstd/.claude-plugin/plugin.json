@@ -5,7 +5,7 @@
   "author": {
     "name": "ZeroAE"
   },
-  "repository": "https://github.com/zeroae/.claude",
+  "repository": "https://github.com/zeroae/claude-plugins",
   "license": "MIT",
   "keywords": ["conventions", "standards", "commits", "github", "changelog"],
   "skills": "./skills/"

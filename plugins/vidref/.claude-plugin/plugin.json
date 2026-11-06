@@ -6,7 +6,7 @@
     "name": "ZeroAE",
     "url": "https://github.com/zeroae"
   },
-  "repository": "https://github.com/zeroae/.claude",
+  "repository": "https://github.com/zeroae/claude-plugins",
   "license": "MIT",
   "keywords": ["video", "transcript", "screenshots", "yt-dlp", "reference-material"],
   "skills": "./skills/"

@@ -7,14 +7,14 @@ output style) at a time, next to ones we write ourselves. Call them as
 ## Install
 
 ```
-/plugin marketplace add zeroae/.claude
+/plugin marketplace add zeroae/claude-plugins
 /plugin install zae@zeroae.com
 ```
 
 On Claude Code 2.1.275 or later, one step does both:
 
 ```
-/plugin install zae --marketplace zeroae/.claude
+/plugin install zae --marketplace zeroae/claude-plugins
 ```
 
 ## Skills

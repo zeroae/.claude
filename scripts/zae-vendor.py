@@ -17,7 +17,7 @@ this script leaves it alone.
   status           each component's pin against upstream HEAD (network;
                    exit 2 = an update is available)
   check            the copied files equal what vendored.json records
-  install          add the zeroae.com marketplace from GitHub (zeroae/.claude)
+  install          add the zeroae.com marketplace from GitHub (zeroae/claude-plugins)
                    and install zae@zeroae.com (once per machine)
 
 <dest> is the component's path inside plugins/zae, e.g. skills/unslop.
@@ -41,7 +41,7 @@ PLUGIN = ROOT / "plugins" / "zae"
 LICENSES = PLUGIN / "licenses"
 LOCK = PLUGIN / "vendored.json"
 CATALOGUE = ROOT / ".claude-plugin" / "marketplace.json"
-GITHUB_REPO = "zeroae/.claude"
+GITHUB_REPO = "zeroae/claude-plugins"
 # Where each kind lives in a plugin, and whether it is a folder or one .md file.
 KINDS = {"skills": "dir", "agents": "file", "commands": "file", "output-styles": "file"}
 # Upstream files a component does not need, at any depth.
