@@ -10,6 +10,8 @@ A collection of Claude Code plugins for ZeroAE development standards and workflo
 |--------|-------------|
 | [`zstd`](plugins/zstd/) | Organization-wide development standards and conventions |
 | [`cspy`](plugins/cspy/) | Architecture patterns from [Cosmic Python](https://cosmicpython.com) for domain-driven design |
+| [`dynamodb`](plugins/dynamodb/) | DynamoDB single-table design patterns, schema design and audits, based on Rick Houlihan's re:Invent talks |
+| [`vidref`](plugins/vidref/) | Extract transcripts and screenshots from videos for skill reference material |
 | [`zae`](plugins/zae/) | Hand-picked skills from other plugins, pinned to an upstream commit, plus our own |
 
 ## Installation
