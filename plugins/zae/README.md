@@ -27,11 +27,13 @@ On Claude Code 2.1.275 or later, one step does both:
 
 | Style | Description | From |
 |-------|-------------|------|
-| `zae-plain` | Plain, direct replies with no AI tells. Keeps Claude Code's coding instructions | Our own, condensed from `unslop`'s rules |
+| `zae:plain` | Plain, direct replies with no AI tells. Keeps Claude Code's coding instructions | Our own, condensed from `unslop`'s rules |
 
 An output style applies to every reply in a session, so it is opt-in: pick it
-with `/output-style`, or set `outputStyle` in `~/.claude/settings.json`. It
-does not set `force-for-plugin`, so enabling `zae` does not turn it on.
+with `/output-style zae:plain`, or set `"outputStyle": "zae:plain"` in
+`~/.claude/settings.json`. Claude Code adds the `zae:` prefix itself, so the
+file's `name` is just `plain`. It does not set `force-for-plugin`, so
+enabling `zae` does not turn it on.
 
 ## Picked vs. our own
 

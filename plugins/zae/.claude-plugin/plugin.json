@@ -1,6 +1,6 @@
 {
   "name": "zae",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Hand-picked skills, agents, commands and output styles from other plugins, pinned to an upstream commit, plus our own",
   "author": {
     "name": "ZeroAE",

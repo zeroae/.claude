@@ -1,5 +1,5 @@
 ---
-name: zae-plain
+name: plain
 description: Plain, direct replies with no AI tells. Condensed from the unslop skill's rules.
 keep-coding-instructions: true
 ---
