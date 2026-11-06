@@ -17,8 +17,8 @@ this script leaves it alone.
   status           each component's pin against upstream HEAD (network;
                    exit 2 = an update is available)
   check            the copied files equal what vendored.json records
-  install          register this checkout as the zeroae.com marketplace and
-                   install zae@zeroae.com (once per machine)
+  install          add the zeroae.com marketplace from GitHub (zeroae/.claude)
+                   and install zae@zeroae.com (once per machine)
 
 <dest> is the component's path inside plugins/zae, e.g. skills/unslop.
 """
@@ -41,6 +41,7 @@ PLUGIN = ROOT / "plugins" / "zae"
 LICENSES = PLUGIN / "licenses"
 LOCK = PLUGIN / "vendored.json"
 CATALOGUE = ROOT / ".claude-plugin" / "marketplace.json"
+GITHUB_REPO = "zeroae/.claude"
 # Where each kind lives in a plugin, and whether it is a folder or one .md file.
 KINDS = {"skills": "dir", "agents": "file", "commands": "file", "output-styles": "file"}
 # Upstream files a component does not need, at any depth.
@@ -389,7 +390,7 @@ def install() -> int:
     if shutil.which("claude") is None:
         die("the `claude` CLI is not on PATH")
     market = json.loads(CATALOGUE.read_text())["name"]
-    added = subprocess.run(["claude", "plugin", "marketplace", "add", str(ROOT)])
+    added = subprocess.run(["claude", "plugin", "marketplace", "add", GITHUB_REPO])
     if added.returncode != 0:
         subprocess.run(["claude", "plugin", "marketplace", "update", market], check=True)
     subprocess.run(["claude", "plugin", "install", f"zae@{market}"], check=True)

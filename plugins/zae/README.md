@@ -7,14 +7,14 @@ output style) at a time, next to ones we write ourselves. Call them as
 ## Install
 
 ```
-/plugin install zae --marketplace zeroae/.claude
+/plugin marketplace add zeroae/.claude
+/plugin install zae@zeroae.com
 ```
 
-Or, from a clone, so edits show up in your next session:
+On Claude Code 2.1.275 or later, one step does both:
 
-```bash
-claude plugin marketplace add ~/ghq/github.com/zeroae/.claude
-claude plugin install zae@zeroae.com
+```
+/plugin install zae --marketplace zeroae/.claude
 ```
 
 ## Skills

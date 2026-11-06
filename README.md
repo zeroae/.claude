@@ -17,6 +17,7 @@ A collection of Claude Code plugins for ZeroAE development standards and workflo
 ## Installation
 
 ```
+/plugin marketplace add zeroae/.claude
 /plugin install {plugin-name}@zeroae.com
 ```
 
