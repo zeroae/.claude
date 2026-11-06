@@ -1,0 +1,13 @@
+{
+  "name": "zae",
+  "version": "0.1.0",
+  "description": "Hand-picked skills, agents, commands and output styles from other plugins, pinned to an upstream commit, plus our own",
+  "author": {
+    "name": "ZeroAE",
+    "url": "https://github.com/zeroae"
+  },
+  "repository": "https://github.com/zeroae/.claude",
+  "license": "MIT",
+  "keywords": ["curated", "skills", "writing", "vendored"],
+  "skills": "./skills/"
+}

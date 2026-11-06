@@ -10,6 +10,7 @@ A collection of Claude Code plugins for ZeroAE development standards and workflo
 |--------|-------------|
 | [`zstd`](plugins/zstd/) | Organization-wide development standards and conventions |
 | [`cspy`](plugins/cspy/) | Architecture patterns from [Cosmic Python](https://cosmicpython.com) for domain-driven design |
+| [`zae`](plugins/zae/) | Hand-picked skills from other plugins, pinned to an upstream commit, plus our own |
 
 ## Installation
 
